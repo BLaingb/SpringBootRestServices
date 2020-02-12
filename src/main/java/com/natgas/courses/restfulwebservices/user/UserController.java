@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-public class UserResource {
+public class UserController {
 
     private final UserDaoService userDao;
 
-    public UserResource(final UserDaoService userDao) {
+    public UserController(final UserDaoService userDao) {
         this.userDao = userDao;
     }
 
@@ -45,6 +46,14 @@ public class UserResource {
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    @DeleteMapping(value="/users/{id}")
+    public void delete(@PathVariable int id) {
+        User user = userDao.deleteById(id);
+        if (user == null) {
+            throw new UserNotFoundException(""+id);
+        }
     }
     
     
